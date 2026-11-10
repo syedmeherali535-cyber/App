@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#142B52"/>
+  <rect x="5.5" y="5.5" width="53" height="53" rx="10" fill="none" stroke="#C19A45" stroke-width="1.6" opacity="0.9"/>
+  <text x="32" y="41" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="24" font-weight="600" fill="#C19A45">ME</text>
+  <path d="M18 49h28" stroke="#C19A45" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="3 3" opacity="0.85"/>
+</svg>

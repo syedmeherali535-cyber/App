@@ -2,6 +2,7 @@
  * Admin API. Every route below /login requires a valid signed session cookie,
  * so no customer data or private file is reachable without authentication.
  */
+import fs from 'node:fs';
 import express from 'express';
 import multer from 'multer';
 import {
@@ -441,7 +442,7 @@ export default function createAdminRouter({ db, dirs, auth, env }) {
     const full = resolveStored(dir, file.stored_name);
     if (full) {
       try {
-        require('node:fs').unlinkSync(full);
+        fs.unlinkSync(full);
       } catch {
         /* file already gone */
       }
