@@ -64,7 +64,8 @@ describe('public API', () => {
     expect(services.services.length).toBeGreaterThanOrEqual(6);
 
     const settings = await fetch(`${base}/api/settings`).then((res) => res.json());
-    expect(settings.settings.business_name).toBe('Meher Ali EMB Studio');
+    expect(settings.business_name).toBe('Meher Ali EMB Studio');
+    expect(settings.delivery_formats).toEqual(['DST', 'PES', 'JEF', 'VP3', 'EMB']);
     expect(JSON.stringify(settings)).not.toMatch(/password/i);
 
     const portfolio = await fetch(`${base}/api/portfolio`).then((res) => res.json());
@@ -95,7 +96,7 @@ describe('public API', () => {
     const res = await fetch(`${base}/api/orders`, { method: 'POST', body: orderForm() });
     expect(res.status).toBe(201);
     const body = await res.json();
-    expect(body.ref).toMatch(/^ME-\d{4}-[A-Z0-9]{4,}$/);
+    expect(body.ref).toMatch(/^ME-\d{6}-[A-Z0-9]{4,}$/);
     expect(body.emailConfigured).toBe(false);
     expect(body.notifications.every((entry) => entry.status === 'skipped')).toBe(true);
 
@@ -173,7 +174,9 @@ describe('admin protection', () => {
     const overview = await fetch(`${base}/api/admin/overview`, { headers: { Cookie: cookie } }).then((res) =>
       res.json(),
     );
-    expect(overview.totals.totalOrders).toBe(1);
+    expect(overview.totals.orders).toBe(1);
+    expect(overview.totals.newOrders).toBe(1);
+    expect(overview.totals.pendingPayments).toBe(1);
   });
 
   it('serves artwork only to an authenticated administrator', async () => {
@@ -195,9 +198,14 @@ describe('admin protection', () => {
     expect(authorized.headers.get('x-content-type-options')).toBe('nosniff');
   });
 
-  it('logs out and invalidates the session cookie', async () => {
-    await fetch(`${base}/api/admin/logout`, { method: 'POST', headers: { Cookie: cookie } });
-    const after = await fetch(`${base}/api/admin/session`, { headers: { Cookie: cookie } });
-    expect(after.status).toBe(401);
+  it('clears the session cookie on logout and rejects tampered cookies', async () => {
+    const logout = await fetch(`${base}/api/admin/logout`, { method: 'POST', headers: { Cookie: cookie } });
+    expect(logout.status).toBe(200);
+    const cleared = logout.headers.get('set-cookie') || '';
+    expect(cleared).toMatch(/Max-Age=0|Expires=Thu, 01 Jan 1970/i);
+
+    const tampered = `${cookie.slice(0, -2)}xx`;
+    const rejected = await fetch(`${base}/api/admin/orders`, { headers: { Cookie: tampered } });
+    expect(rejected.status).toBe(401);
   });
 });
