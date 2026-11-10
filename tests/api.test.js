@@ -175,7 +175,8 @@ describe('admin protection', () => {
       res.json(),
     );
     expect(overview.totals.orders).toBe(1);
-    expect(overview.totals.newOrders).toBe(1);
+    expect(overview.byStatus.QUOTATION_SENT).toBe(1);
+    expect(overview.totals.newOrders).toBe(0);
     expect(overview.totals.pendingPayments).toBe(1);
   });
 
