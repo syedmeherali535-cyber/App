@@ -255,7 +255,6 @@ export default function AdminOrderDetailPage() {
               Order status
             </label>
             <select id="status" className="select" value={status} onChange={(event) => setStatus(event.target.value)}>
-              {Object.keys(statusTone('')).length ? null : null}
               {['NEW', 'UNDER_REVIEW', 'QUOTATION_SENT', 'AWAITING_PAYMENT', 'PAYMENT_VERIFIED', 'IN_PROGRESS', 'QUALITY_CHECK', 'COMPLETED', 'DELIVERED', 'CANCELLED'].map(
                 (value) => (
                   <option key={value} value={value}>
